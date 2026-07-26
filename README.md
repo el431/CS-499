@@ -1,19 +1,20 @@
 <img width="975" height="182" alt="image" src="https://github.com/user-attachments/assets/e04cd7ac-3022-4236-80a5-b3d1b757f6c6" />
-Computer Science ePortfolio   SNHU CS-499 by Beverly Vaughan
 
-Gaming Development * Coding * Java * C++ * 3D Modeling * Web Creation
+# Computer Science ePortfolio   SNHU CS-499 by Beverly Vaughan
 
-July 1, 2026
+# Gaming Development * Coding * Java * C++ * 3D Modeling * Web Creation
 
-Introduction
+#### July 1, 2026
+
+### Introduction
 
 Welcome to my ePortfolio. My name is Beverly Vaughan, and I am a computer science student developing skills in software engineering, algorithms and data structures, databases, computational graphics, and full-stack development. This portfolio highlights selected projects that demonstrate my growth as a programmer and problem solver. Through these artifacts, I show my ability to design, develop, test, and improve software solutions using industry-relevant tools and practices.
 
-Button Section
+### Button Section
 
-Projects | Resume | GitHub
+### Projects | Resume | GitHub
 
-Professional Assessment
+### Professional Assessment
 
   Throughout my computer science program, I have developed a stronger understanding of how to design, build, test, and improve software solutions. The work I completed in my courses has helped me grow as a problem solver, programmer, and technical communicator. My ePortfolio represents this growth by showing selected artifacts that demonstrate my ability to apply computer science concepts in practical ways. These artifacts highlight my skills in software design and engineering, algorithms and data structures, databases, and the use of modern development tools.
 One of the most important skills I have developed is the ability to approach problems systematically.    In earlier projects, I often focused mainly on getting the program to work. As I progressed through the program, I learned that successful software development also requires planning, clean design, testing, documentation, and maintainability. My enhanced artifacts show this growth because I revisited previous work and improved it with a more professional mindset. This process helped me understand that software is rarely finished after the first version; it can always be refined to better meet user needs and technical standards.
@@ -23,52 +24,52 @@ My database-related work helped me understand how applications store, retrieve, 
 Another major area of growth has been communication. Computer science professionals must be able to explain technical choices clearly to different audiences. Through code reviews, written narratives, and project documentation, I practiced explaining what I built, why I made certain design decisions, and how my work connects to broader course outcomes. This helped me become more confident in presenting my technical abilities in a professional way.
   Overall, my ePortfolio shows that I have grown into a more thoughtful and capable computer science student. I have learned how to combine creativity, logic, and technical skill to solve problems and improve existing work. While I still have areas where I want to continue growing, especially in advanced development practices and deeper testing strategies, I feel more prepared to enter the professional field. My completed artifacts demonstrate my ability to learn new technologies, troubleshoot challenges, communicate effectively, and build software solutions that reflect both technical knowledge and professional growth.
 
-Course Outcomes
+### Course Outcomes
 
 1.	I will employ strategies for building collaborative environments that enable diverse audiences to support organizational decision making in the field of computer science.
 2.	Design, develop, and deliver professional-quality written, and visual communication.
 3.	Evaluate computing solutions while managing the trade-offs involved in designing.
 4.	The ability to use innovative techniques, skills, and tools
 
-Code Review
+### Code Review
 
 A strong artifact for the Software Engineering and Design category would be your CS 340 Grazioso Salvare Animal Shelter Dashboard.
 This artifact fits the category well because it demonstrates full-stack software design concepts, including database interaction, modular CRUD operations, dashboard development, filtering logic, and user-centered interface design.
 
-Artifact Selection and Origin
+### Artifact Selection and Origin
 
-A Category One: Software Engineering and Design
+### A Category One: Software Engineering and Design
 
   For my Software Engineering and Design artifact, I selected the Grazioso Salvare Animal Shelter Dashboard that I originally developed in CS 340: Client/Server Development. The project was created to help the fictional rescue organization Grazioso Salvare identify dogs that may be good candidates for specialized rescue training. The dashboard connects to a MongoDB database containing Austin Animal Center shelter outcome data and allows users to filter animals by rescue type, view matching records in a data table, and visualize animal locations and breed distributions.
   The original artifact included a Python CRUD module that connected to MongoDB and supported create, read, update, and delete operations. It also included a Dash-based web dashboard that displayed animal shelter data through interactive components such as a data table, pie chart, and geographic map. This project originated as a course assignment focused on applying database management, client/server architecture, and software design principles to a real-world-style problem.
 
-Why This Artifact Fits Software Engineering and Design
+### Why This Artifact Fits Software Engineering and Design
 
 T  his artifact aligns with the Software Engineering and Design category because it shows my ability to design and implement a software solution that connects a backend database to an interactive frontend interface. It demonstrates modular programming through the use of a separate CRUD class, database query design through MongoDB filters, and interface design through Dash components. The project also reflects software engineering practices such as separating concerns, organizing code into reusable functions, and designing the application around the needs of an end user.
 
-Enhancement Plan
+### Enhancement Plan
 
   For my enhancement, I would improve the artifact by making the dashboard more maintainable, secure, and user-friendly. First, I would refactor the code so that database connection settings are stored in environment variables instead of being hard-coded into the program. This would improve security and make the application easier to deploy in different environments. Second, I would improve the CRUD module by adding stronger input validation, exception handling, and clearer return messages. This would make the backend more reliable and easier to debug.
   I would also enhance the dashboard interface by improving the filtering system, adding clearer labels, and making the visualizations more responsive. For example, I could allow users to select multiple rescue types or combine filters such as breed, age range, and sex. I would also add comments and documentation throughout the code so future developers could better understand how the dashboard works.
 
-File to Submit
+### File to Submit
 
 For the required file, you should include the main code connected to the artifact. A good submission file could be named:
 
-AnimalShelterDashboard_EnhancementPlan
+**AnimalShelterDashboard_EnhancementPlan**
 
-Artifact: Grazioso Salvare Animal Shelter Dashboard
+**Artifact: Grazioso Salvare Animal Shelter Dashboard**
 
-A Category One: Software Engineering and Design
+**A Category One: Software Engineering and Design**
 
-Origin:
+**Origin:**
 
 This artifact was originally created in CS 340: Client/Server Development.
 The purpose of the project was to design a dashboard that connects to a
 MongoDB animal shelter database and helps Grazioso Salvare identify dogs
 that may be suitable for rescue training programs.
 
-Enhancement Plan:
+**Enhancement Plan:**
 
 1. Improve security by moving MongoDB credentials into environment variables.
 2. Refactor the CRUD module to improve modularity and maintainability.
@@ -77,7 +78,7 @@ Enhancement Plan:
 5. Improve user interface labels, chart responsiveness, and dashboard usability.
 6. Add comments and documentation to make the code easier to understand.
 
-CODE:
+**CODE:**
 
 from pymongo import MongoClient
 from bson.objectid import ObjectId
@@ -169,7 +170,7 @@ def build_query(filter_type):
         return {}
 
 
-B. Category Two: Algorithms and Data Structures
+**B. Category Two: Algorithms and Data Structures**
 
   For the Algorithms and Data Structures category, I selected my CS 330 2D Animation project. This artifact was originally created in CS 330: Computational Graphics and Visualization. The project used C++ and OpenGL to create an interactive 2D animation similar to a brick breaker game. The program included a paddle controlled by user input, moving balls, destructible and reflective bricks, collision detection, color changes, and object state updates.
 
