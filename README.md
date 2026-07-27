@@ -54,7 +54,7 @@ T  his artifact aligns with the Software Engineering and Design category because
 
 ### File to Submit
 
-For the required file, you should include the main code connected to the artifact. A good submission file could be named:
+For the required file, I will include the main code connected to the artifact. A good submission file could be named:
 
 **AnimalShelterDashboard_EnhancementPlan**
 
@@ -290,3 +290,318 @@ END
 CODE REVIEW VIDEO FILE:
 
 "C:\Users\waito\Downloads\Computer Science Video - Compressed (1).mp4"
+
+**A Category One: Software Engineering and Design**
+**Enhancement Plan**
+
+**B. Category Two: Algorithms and Data Structures**
+**Enhancement Plan**
+
+For the enhanced version, update the project so the bricks are no longer simple static objects. Each brick should track its own status and number of hits remaining. The ball should also have improved movement logic, including speed limits, color changes, and better collision response. This makes the project a stronger algorithms and data structures artifact because the program now uses object state, collision algorithms, condition-based updates, and structured class behavior.
+Add or Update the Brick Classenum BRICKTYPE { REFLECTIVE, DESTRUCTABLE };
+enum ONOFF { ON, OFF };
+class Brick
+{
+public:
+	float red, green, blue;
+	float x, y, width;
+	BRICKTYPE brick_type;
+	ONOFF onoff;
+	int hitsRemaining;
+	Brick(BRICKTYPE bt, float xx, float yy, float ww, float rr, float gg, float bb)
+	{
+		brick_type = bt;
+		x = xx;
+		y = yy;
+		width = ww;
+		red = rr;
+		green = gg;
+		blue = bb;
+		onoff = ON;
+		if (brick_type == DESTRUCTABLE)
+		{
+			hitsRemaining = 2;
+		}
+		else
+		{
+			hitsRemaining = 999;
+		}
+	}
+
+	void drawBrick()
+	{
+		if (onoff == OFF)
+		{
+			return;
+		}
+		double halfside = width / 2;
+		glColor3d(red, green, blue);
+		glBegin(GL_POLYGON);
+		glVertex2d(x + halfside, y + halfside);
+		glVertex2d(x + halfside, y - halfside);
+		glVertex2d(x - halfside, y - halfside);
+		glVertex2d(x - halfside, y + halfside);
+		glEnd();
+		// Decorative stripes to show brick structure
+		glColor3d(red * 0.7, green * 0.7, blue * 0.7);
+		glBegin(GL_LINES);
+		glVertex2d(x - halfside, y);
+		glVertex2d(x + halfside, y);
+		glEnd();
+	}
+	void OnHit()
+	{
+		if (brick_type == REFLECTIVE)
+		{
+			return;
+		}
+		hitsRemaining--;
+		if (hitsRemaining == 1)
+		{
+			// Darken the brick after first hit
+			red *= 0.5f;
+			green *= 0.5f;
+			blue *= 0.5f;
+		}
+		else if (hitsRemaining <= 0)
+		{
+			onoff = OFF;
+		}
+	}
+};
+This version improves ball movement, collision response, speed control, and color
+changes.
+class Circle
+{
+public:
+	float red, green, blue;
+	float radius;
+	float x;
+	float y;
+	float velocityX;
+	float velocityY;
+	Brick* lastHitBrick;
+
+	Circle(float xx, float yy, float rr, float vx, float vy, float r, float g, float b)
+	{
+		x = xx;
+		y = yy;
+		radius = rr;
+		velocityX = vx;
+		velocityY = vy;
+		red = r;
+		green = g;
+		blue = b;
+		lastHitBrick = nullptr;
+	}
+	void DrawCircle()
+	{
+		glColor3f(red, green, blue);
+		glBegin(GL_POLYGON);
+		for (int i = 0; i < 360; i++)
+		{
+			float degInRad = i * 3.14159f / 180.0f;
+			glVertex2f(cos(degInRad) * radius + x, sin(degInRad) * radius + y);
+		}
+		glEnd();
+	}
+	void ChangeColor()
+	{
+		red = static_cast<float>(rand()) / RAND_MAX;
+		green = static_cast<float>(rand()) / RAND_MAX;
+		blue = static_cast<float>(rand()) / RAND_MAX;
+	}
+	void LimitSpeed()
+	{
+		float maxSpeed = 0.040f;
+		if (velocityX > maxSpeed) velocityX = maxSpeed;
+		if (velocityX < -maxSpeed) velocityX = -maxSpeed;
+		if (velocityY > maxSpeed) velocityY = maxSpeed;
+		if (velocityY < -maxSpeed) velocityY = -maxSpeed;
+	}
+	void IncreaseSpeedSlightly()
+	{
+		velocityX *= 1.01f;
+		velocityY *= 1.01f;
+		LimitSpeed();
+	}
+	bool CheckCollision(Brick* brick)
+	{
+		if (brick->onoff == OFF)
+		{
+			return false;
+		}
+		float halfside = brick->width / 2.0f;
+		float closestX = max(brick->x - halfside, min(x, brick->x + halfside));
+		float closestY = max(brick->y - halfside, min(y, brick->y + halfside));
+		float distanceX = x - closestX;
+		float distanceY = y - closestY;
+
+		float distanceSquared = (distanceX * distanceX) + (distanceY * distanceY);
+		if (distanceSquared < radius * radius)
+		{
+			if (lastHitBrick == brick)
+			{
+				return false;
+			}
+			lastHitBrick = brick;
+			float overlapX = radius - abs(distanceX);
+			float overlapY = radius - abs(distanceY);
+			if (overlapX < overlapY)
+			{
+				velocityX = -velocityX;
+			}
+			else
+			{
+				velocityY = -velocityY;
+			}
+			brick->OnHit();
+			ChangeColor();
+			IncreaseSpeedSlightly();
+			return true;
+		}
+		return false;
+	}
+	void CheckPaddleCollision(Brick* paddle)
+	{
+		float halfside = paddle->width / 2.0f;
+		if (x + radius > paddle->x - halfside &&
+			x - radius < paddle->x + halfside &&
+			y - radius < paddle->y + halfside &&
+			y + radius > paddle->y - halfside)
+		{
+			velocityY = abs(velocityY);
+
+			// Changes horizontal direction based on where ball hits paddle
+			float hitPosition = (x - paddle->x) / halfside;
+			velocityX += hitPosition * 0.008f;
+			ChangeColor();
+			LimitSpeed();
+		}
+	}
+	void MoveOneStep()
+	{
+		x += velocityX;
+		y += velocityY;
+		// Left and right wall collision
+		if (x + radius > 1.0f || x - radius < -1.0f)
+		{
+			velocityX = -velocityX;
+			ChangeColor();
+			IncreaseSpeedSlightly();
+			lastHitBrick = nullptr;
+		}
+		// Top wall collision
+		if (y + radius > 1.0f)
+		{
+			velocityY = -velocityY;
+			ChangeColor();
+			IncreaseSpeedSlightly();
+			lastHitBrick = nullptr;
+		}
+		// Bottom boundary reset
+		if (y - radius < -1.0f)
+		{
+			x = 0.0f;
+			y = -0.2f;
+			velocityX = 0.012f;
+			velocityY = 0.014f;
+			lastHitBrick = nullptr;
+		}
+	}
+};
+Add a Vector to Store Multiple Balls
+vector<Circle> balls;
+bool spacePressed = false;
+float paddlePos = 0.0f;
+#include <vector>
+#include <algorithm>
+#include <cmath>
+#include <cstdlib>
+using namespace std;
+Create the Paddle
+Brick paddle(REFLECTIVE, 0.0f, -0.85f, 0.35f, 0.2f, 0.8f, 1.0f);
+AddBrick brick1(DESTRUCTABLE, -0.70f, 0.70f, 0.20f, 1.0f, 0.0f, 0.0f);
+Brick brick2(DESTRUCTABLE, -0.40f, 0.70f, 0.20f, 0.0f, 1.0f, 0.0f);
+Brick brick3(DESTRUCTABLE, -0.10f, 0.70f, 0.20f, 0.0f, 0.0f, 1.0f);
+Brick brick4(DESTRUCTABLE, 0.20f, 0.70f, 0.20f, 1.0f, 1.0f, 0.0f);
+Brick brick5(DESTRUCTABLE, 0.50f, 0.70f, 0.20f, 1.0f, 0.0f, 1.0f);
+Brick brick6(REFLECTIVE, 0.80f, 0.70f, 0.20f, 0.8f, 0.8f, 0.8f); Brick Objects
+vector<Brick*> bricks = {
+	&brick1,
+	&brick2,
+	&brick3,
+	&brick4,
+	&brick5,
+	&brick6
+};
+Initialize the First Ball
+balls.push_back(Circle(0.0f, -0.2f, 0.05f, 0.012f, 0.014f, 1.0f, 1.0f, 1.0f));
+Enhance Keyboard Input
+void processInput(GLFWwindow* window)
+{
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+	{
+		glfwSetWindowShouldClose(window, true);
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+	{
+		paddlePos -= 0.025f;
+	}
+	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+	{
+		paddlePos += 0.025f;
+	}
+	// Keep paddle inside screen bounds
+	if (paddlePos < -0.85f)
+	{
+		paddlePos = -0.85f;
+	}
+	if (paddlePos > 0.85f)
+	{
+		paddlePos = 0.85f;
+	}
+
+	paddle.x = paddlePos;
+	// Spacebar spawns a new ball
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && !spacePressed)
+	{
+		float randomRed = static_cast<float>(rand()) / RAND_MAX;
+		float randomGreen = static_cast<float>(rand()) / RAND_MAX;
+		float randomBlue = static_cast<float>(rand()) / RAND_MAX;
+		balls.push_back(Circle(0.0f, -0.2f, 0.05f, -0.012f, 0.014f, randomRed, randomGreen, randomBlue));
+		spacePressed = true;
+	}
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_RELEASE)
+	{
+		spacePressed = false;
+	}
+}
+Update the Render Loop
+for (int i = 0; i < bricks.size(); i++)
+{
+	bricks[i]->drawBrick();
+}
+paddle.drawBrick();
+for (int i = 0; i < balls.size(); i++)
+{
+	balls[i].MoveOneStep();
+	balls[i].CheckPaddleCollision(&paddle);
+	for (int j = 0; j < bricks.size(); j++)
+	{
+		balls[i].CheckCollision(bricks[j]);
+	}
+	balls[i].DrawCircle();
+}
+What This Enhancement Demonstrates
+Enhancement	                        Skill Demonstrated
+Multi-hit bricks	                 Object state management
+Improved collision detection	     Algorithmic problem-solving
+Ball speed limit	                 Control logic and performance awareness
+Paddle bounce angle	               Mathematical reasoning
+Vector of balls	                    Data structure usage
+Brick vector	                      Dynamic object management
+Classes for bricks and balls	      Object-oriented design
+
+
