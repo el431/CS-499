@@ -294,6 +294,139 @@ CODE REVIEW VIDEO FILE:
 **A Category One: Software Engineering and Design**
 **Enhancement Plan**
 
+For my enhancement, I would improve the artifact by making the dashboard more maintainable, secure, and user-friendly. First, I would refactor the code so that database connection settings are stored in environment variables instead of being hard-coded into the program. This would improve security and make the application easier to deploy in different environments. Second, I would improve the CRUD module by adding stronger input validation, exception handling, and clearer return messages. This would make the backend more reliable and easier to debug.
+
+I would also enhance the dashboard interface by improving the filtering system, adding clearer labels, and making the visualizations more responsive. For example, I could allow users to select multiple rescue types or combine filters such as breed, age range, and sex. I would also add comments and documentation throughout the code so future developers could better understand how the dashboard works.
+
+"""
+Artifact: Grazioso Salvare Animal Shelter Dashboard
+Category: Software Engineering and Design
+
+Origin:
+This artifact was originally created in CS 340: Client/Server Development.
+The purpose of the project was to design a dashboard that connects to a
+MongoDB animal shelter database and helps Grazioso Salvare identify dogs
+that may be suitable for rescue training programs.
+
+Enhancement Plan:
+1. Improve security by moving MongoDB credentials into environment variables.
+2. Refactor the CRUD module to improve modularity and maintainability.
+3. Add input validation and exception handling to database operations.
+4. Improve dashboard filtering options for rescue type, breed, age, and sex.
+5. Improve user interface labels, chart responsiveness, and dashboard usability.
+6. Add comments and documentation to make the code easier to understand.
+"""
+
+from pymongo import MongoClient
+from bson.objectid import ObjectId
+
+
+class AnimalShelterCRUD:
+    """CRUD operations for the animal shelter MongoDB collection."""
+
+    def __init__(self, username, password, host="localhost", port=27017, db="aac", collection="animals"):
+        connection_string = f"mongodb://{username}:{password}@{host}:{port}/?authSource=admin"
+        self.client = MongoClient(connection_string)
+        self.database = self.client[db]
+        self.collection = self.database[collection]
+
+    def create(self, data):
+        """Insert a new animal record into the database."""
+        if data is not None and isinstance(data, dict):
+            result = self.collection.insert_one(data)
+            return result.inserted_id is not None
+        raise ValueError("Data must be a non-empty dictionary.")
+
+    def read(self, query):
+        """Read animal records from the database based on a query."""
+        if query is not None and isinstance(query, dict):
+            return list(self.collection.find(query))
+        raise ValueError("Query must be a dictionary.")
+
+    def update(self, query, update_data):
+        """Update animal records that match the query."""
+        if isinstance(query, dict) and isinstance(update_data, dict):
+            result = self.collection.update_many(query, {"$set": update_data})
+            return result.modified_count
+        raise ValueError("Query and update data must be dictionaries.")
+
+    def delete(self, query):
+        """Delete animal records that match the query."""
+        if query is not None and isinstance(query, dict):
+            result = self.collection.delete_many(query)
+            return result.deleted_count
+        raise ValueError("Query must be a dictionary.")
+
+
+def build_query(filter_type):
+    """Build MongoDB queries based on selected rescue category."""
+
+    water_breeds = [
+        "Labrador Retriever Mix",
+        "Chesapeake Bay Retriever",
+        "Newfoundland"
+    ]
+
+    mountain_breeds = [
+        "German Shepherd",
+        "Alaskan Malamute",
+        "Siberian Husky"
+    ]
+
+    disaster_breeds = [
+        "Doberman Pinscher",
+        "German Shepherd",
+        "Golden Retriever"
+    ]
+
+    if filter_type == "Water Rescue":
+        return {
+            "animal_type": "Dog",
+            "breed": {"$in": water_breeds},
+            "sex_upon_outcome": "Intact Female",
+            "age_upon_outcome_in_weeks": {"$gte": 26, "$lte": 156}
+        }
+
+    elif filter_type == "Mountain/Wilderness Rescue":
+        return {
+            "animal_type": "Dog",
+            "breed": {"$in": mountain_breeds},
+            "sex_upon_outcome": "Intact Male",
+            "age_upon_outcome_in_weeks": {"$gte": 26, "$lte": 156}
+        }
+
+    elif filter_type == "Disaster Rescue":
+        return {
+            "animal_type": "Dog",
+            "breed": {"$in": disaster_breeds},
+            "sex_upon_outcome": "Intact Male",
+            "age_upon_outcome_in_weeks": {"$gte": 20, "$lte": 300}
+        }
+
+    else:
+        return {}
+
+"""
+Artifact: Grazioso Salvare Animal Shelter Dashboard
+Category: Software Engineering and Design
+
+Origin:
+This artifact was originally created in CS 340: Client/Server Development.
+It was designed as a Python Dash dashboard connected to a MongoDB database
+containing Austin Animal Center shelter data. The dashboard helped users
+filter animal records for rescue-training suitability and view the results
+through a data table, pie chart, and geographic map.
+
+Planned Enhancement:
+The enhancement will expand the dashboard from a basic filtering application
+into a rescue-animal decision-support system. The enhanced version will include
+more flexible multi-criteria filtering, improved software architecture, stronger
+database error handling, secure environment-based credentials, and improved
+dashboard visualizations. This enhancement increases the project’s complexity
+and demonstrates software engineering and design skills beyond basic debugging
+or code cleanup.
+"""
+
 **B. Category Two: Algorithms and Data Structures**
 **Enhancement Plan**
 
