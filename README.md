@@ -222,7 +222,7 @@ FUNCTION updateGameFrame():
     Render active bricks
     Render paddle
 
-C Category Three: Databases
+**C Category Three: Databases**
 
   For the Databases category, I selected my Grazioso Salvare Animal Shelter Dashboard from CS 340: Client/Server Development. This artifact was originally created as a Python Dash dashboard connected to a MongoDB database containing animal shelter outcome data from the Austin Animal Center. The project was designed for the fictional organization Grazioso Salvare, which needed a way to search animal shelter records and identify dogs that may be suitable for different rescue-training categories.
 
@@ -603,5 +603,269 @@ Paddle bounce angle	               Mathematical reasoning
 Vector of balls	                    Data structure usage
 Brick vector	                      Dynamic object management
 Classes for bricks and balls	      Object-oriented design
+
+**C Category Three: Databases**
+**Enhancement Plan**
+Enhanced animal_shelter.py CRUD Module
+from pymongo import MongoClient, ASCENDING
+from pymongo.errors import PyMongoError
+class AnimalShelterCRUD:
+    """CRUD operations for the AAC animal shelter MongoDB collection."""
+    def __init__(self, username, password, host="localhost", port=27017,
+                 database="AAC", collection="animals"):    """
+        Initializes the database connection.
+        Credentials are passed in instead of hardcoded to improve security.  """
+        self.client = MongoClient(
+            f"mongodb://{username}:{password}@{host}:{port}/?authSource=admin"
+        )
+        self.database = self.client[database]
+        self.collection = self.database[collection]
+    def create_indexes(self):
+        """
+        Enhancement:
+        Adds indexes to fields commonly used in dashboard filters.
+        This improves query performance for repeated searches
+        try:
+            self.collection.create_index([("animal_type", ASCENDING)])
+            self.collection.create_index([("breed", ASCENDING)])
+            self.collection.create_index([("sex_upon_outcome", ASCENDING)])
+            self.collection.create_index([("age_upon_outcome_in_weeks", ASCENDING)])
+            self.collection.create_index([("location_lat", ASCENDING)])
+            self.collection.create_index([("location_long", ASCENDING)])
+            return True
+        except PyMongoError as error:
+            print(f"Index creation failed: {error}")
+            return False
+    def create(self, data):
+        """
+        Inserts a new document into the collection.
+        """
+        if data is not None and isinstance(data, dict):
+            try:
+                result = self.collection.insert_one(data)
+                return result.acknowledged
+            except PyMongoError as error:
+                print(f"Create operation failed: {error}")
+                return False
+        return False
+    def read(self, query=None, projection=None, limit=0):
+        """
+        Reads documents from the collection.
+        Enhancement:
+        Supports projection and limit so the dashboard can retrieve
+        only the data it needs.
+        """
+        if query is None:
+            query = {}
+        try:
+            cursor = self.collection.find(query, projection)
+            if limit > 0:
+                cursor = cursor.limit(limit)
+            return list(cursor)
+        except PyMongoError as error:
+            print(f"Read operation failed: {error}")
+            return []
+    def update(self, query, new_values):
+        """
+        Updates documents matching the query.
+        """
+        if query is not None and new_values is not None:
+            try:
+                result = self.collection.update_many(
+                    query,
+                   {"$set": new_values}
+                )
+                return result.modified_count
+            except PyMongoError as error:
+                print(f"Update operation failed: {error}")
+                return 0
+        return 0
+    def delete(self, query):
+        """
+        Deletes documents matching the query.
+        """
+        if query is not None:
+            try:
+                result = self.collection.delete_many(query)
+                return result.deleted_count
+            except PyMongoError as error:
+                print(f"Delete operation failed: {error}")
+                return 0
+        return 0
+    def build_rescue_query(self, rescue_type):
+        """
+        Enhancement Filter Function for Dashboard
+        Builds reusable MongoDB queries for each rescue category.
+        This keeps database filtering organized and easier to maintain. ""
+        water_breeds = [
+            "Labrador Retriever Mix",
+            "Chesapeake Bay Retriever",
+            "Newfoundland"
+        ]
+        mountain_breeds = [
+            "German Shepherd",
+            "Alaskan Malamute",
+            "Old English Sheepdog",
+            "Siberian Husky",
+            "Rottweiler"
+        ]
+        disaster_breeds = [
+            "Doberman Pinscher",
+            "German Shepherd",
+            "Golden Retriever",
+            "Bloodhound",
+            "Rottweiler"
+        ]
+        if rescue_type == "Water Rescue":
+            return {
+                "animal_type": "Dog",
+                "breed": {"$in": water_breeds},
+                "sex_upon_outcome": "Intact Female",
+                "age_upon_outcome_in_weeks": {
+                    "$gte": 26,
+                    "$lte": 156
+                }
+            }
+
+        elif rescue_type == "Mountain/Wilderness Rescue":
+            return {
+                "animal_type": "Dog",
+                "breed": {"$in": mountain_breeds},
+                "sex_upon_outcome": "Intact Male",
+                "age_upon_outcome_in_weeks": {
+                    "$gte": 26,
+                    "$lte": 156
+                }
+            }
+        elif rescue_type == "Disaster Rescue":
+            return {
+                "animal_type": "Dog",
+                "breed": {"$in": disaster_breeds},
+                "sex_upon_outcome": "Intact Male",
+                "age_upon_outcome_in_weeks": {
+                    "$gte": 20,
+                    "$lte": 300
+                }
+            }
+
+        else:
+            return {}
+    def read_by_rescue_type(self, rescue_type):
+        """
+        Enhancement:
+        Reads animals using rescue-category filter logic.
+        """
+        query = self.build_rescue_query(rescue_type)
+        return self.read(query)
+Enhanc def build_query(filter_type):
+    """
+    Builds MongoDB query based on selected rescue filter.
+    """
+    water_breeds = [
+        "Labrador Retriever Mix",
+        "Chesapeake Bay Retriever",
+        "Newfoundland"
+    ]
+    mountain_breeds = [
+        "German Shepherd",
+        "Alaskan Malamute",
+        "Old English Sheepdog",
+        "Siberian Husky",
+        "Rottweiler"
+    ]
+    disaster_breeds = [
+        "Doberman Pinscher",
+        "German Shepherd",
+        "Golden Retriever",
+        "Bloodhound",
+        "Rottweiler"
+    ]
+    if filter_type == "Water Rescue":
+        return {
+            "animal_type": "Dog",
+            "breed": {"$in": water_breeds},
+            "sex_upon_outcome": "Intact Female",
+            "age_upon_outcome_in_weeks": {
+                "$gte": 26,
+                "$lte": 156
+            }
+        }
+    elif filter_type == "Mountain/Wilderness Rescue":
+        return {
+            "animal_type": "Dog",
+            "breed": {"$in": mountain_breeds},
+            "sex_upon_outcome": "Intact Male",
+            "age_upon_outcome_in_weeks": {
+                "$gte": 26,
+                "$lte": 156
+            }
+        }
+    elif filter_type == "Disaster Rescue":
+        return {
+            "animal_type": "Dog",
+            "breed": {"$in": disaster_breeds},
+            "sex_upon_outcome": "Intact Male",
+            "age_upon_outcome_in_weeks": {
+                "$gte": 20,
+                "$lte": 300
+            }
+        }
+    else:
+        return {}
+Enhanced Dashboard Callback
+@app.callback(
+    Output("datatable-id", "data"),
+    [Input("filter-type", "value")]
+)
+def update_dashboard(filter_type):
+    """
+    Enhancement:
+    Uses structured query-building logic to retrieve filtered records.
+    """
+    query = build_query(filter_type)
+    data = shelter.read(query)
+    df = pd.DataFrame.from_records(data)
+    if "_id" in df.columns:
+        df.drop(columns=["_id"], inplace=True)
+    return df.to_dict("records")
+Optional Enhancement: Add a Search Filter
+def build_search_query(search_text):
+    """
+    Enhancement:
+    Builds a search query for breed or animal name.
+    """
+    if search_text is None or search_text.strip() == "":
+        return {}
+    return {
+        "$or": [
+            {"breed": {"$regex": search_text, "$options": "i"}},
+            {"name": {"$regex": search_text, "$options": "i"}}
+        ]
+    } def combine_queries(rescue_query, search_query):
+    """
+    Combines rescue filters and search filters.
+    """
+    if rescue_query and search_query:
+        return {
+            "$and": [
+                rescue_query,
+                search_query
+            ]
+        }
+    if rescue_query:
+        return rescue_query
+    if search_query:
+        return search_query
+    return {}
+What Makes This an Enhancement?
+You can say your database enhancement includes:
+Enhancement Code	                            What It Shows
+create_indexes()	                            Database performance improvement
+build_rescue_query()	                        Organized query design
+read_by_rescue_type()	                        Reusable database access
+Improved read() method	                        Better data retrieval control
+Error handling with PyMongoError	            More reliable database operations
+Removed hardcoded credentials from class	    Better security mindset
+Optional search query	                        More useful database filtering
 
 
