@@ -222,7 +222,7 @@ FUNCTION updateGameFrame():
     Render active bricks
     Render paddle
 
-**C Category Three: Databases**
+**C Category Three:Databases**
 
   For the Databases category, I selected my Grazioso Salvare Animal Shelter Dashboard from CS 340: Client/Server Development. This artifact was originally created as a Python Dash dashboard connected to a MongoDB database containing animal shelter outcome data from the Austin Animal Center. The project was designed for the fictional organization Grazioso Salvare, which needed a way to search animal shelter records and identify dogs that may be suitable for different rescue-training categories.
 
@@ -606,6 +606,7 @@ Classes for bricks and balls	      Object-oriented design
 
 **C Category Three: Databases**
 **Enhancement Plan**
+
 Enhanced animal_shelter.py CRUD Module
 from pymongo import MongoClient, ASCENDING
 from pymongo.errors import PyMongoError
